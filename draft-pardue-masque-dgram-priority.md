@@ -2,7 +2,7 @@
 title: HTTP Datagram Prioritization
 abbrev: HTTP Datagram Prioritization
 docname: draft-pardue-masque-dgram-priority-latest
-category: experimental
+category: std
 
 ipr: trust200902
 area: Transport
