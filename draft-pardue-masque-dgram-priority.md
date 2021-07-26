@@ -58,7 +58,7 @@ streams.
 
 While QUIC streams support multiplexing natively via use of a stream identifier,
 the QUIC DATAGRAM extension does not provide any such identifier. HTTP datagrams
-{{HTTP-DATAGRAM}} supports multiplexting using a set of application-level
+{{HTTP-DATAGRAM}} supports multiplexing using a set of application-level
 identifiers that can be controlled and accessed by HTTP/3. One identifer relates
 to a request stream, the second, optional, identifer relates to an abstract
 context. {{HTTP-DATAGRAM}} does not, however, define any means for multiplexed
@@ -90,7 +90,7 @@ combination with other inputs, to make resource allocation and scheduling
 choices. Urgency communicates the client-view of request importance, and
 incremental communicates how the client intends to process response data as it
 arrives. Parameters are communicated in HTTP headers or version-specific frames.
-A client omitting the urgency or incremetal parameters can be interprested by
+A client omitting the urgency or incremental parameters can be interpreted by
 the server as a signal to apply default priorities. The core scheme is
 extensible, new parameters can be defined to augment the base ones.
 
@@ -104,7 +104,7 @@ arrive.
 
 The datagram-urgency parameter (`du`) takes an integer between 0 and 7, in
 descending order of priority. This range matches the base urgency (`u`)
-paramenter range; see {{Section 4.1 of !I-D.ietf-httpbis-priority}}.
+parameter range; see Section 4.1 of {{!I-D.ietf-httpbis-priority}}.
 
 The value is encoded as an sf-integer. There is no default value.
 
@@ -139,8 +139,8 @@ a request stream. Prioritization of individual contexts is not supported.
 
 ## Reprioritization
 
-Reprioritization is supported using the existing mechanisms defined in {{Section
-6 of !I-D.ietf-httpbis-priority}}.
+Reprioritization is supported using the existing mechanisms defined in Section
+6 of {{!I-D.ietf-httpbis-priority}}.
 
 # Client Scheduling
 
@@ -151,29 +151,29 @@ about HTTP datagrams related to the requests it initiates.
 
 Priority signals are input to a prioritization process. Expressing priority is
 only a suggestion. The datagram-urgency parameter introduces new scheduling
-considerations on top of those presented in {{Section 10 of
-!I-D.ietf-httpbis-priority}}.
+considerations on top of those presented in Section 10 of
+{{!I-D.ietf-httpbis-priority}}.
 
 It is RECOMMENDED that, when possible, servers send higher urgency HTTP
 datagrams before lower urgency datagrams.
 
 Where streams and datagrams have equal urgency and datagram-urgency, it is
 RECOMMENDED that servers alternate emitting HTTP datagrams and stream bytes.
-Where servers implement the recommendations in {{Section 10 of
-!I-D.ietf-httpbis-priority}}, alternating between datagram and stream data will
+Where servers implement the recommendations in Section 10 of
+{{!I-D.ietf-httpbis-priority}}, alternating between datagram and stream data will
 result in fair scheduling. This recommendation holds whether stream are
 incremental or not.
 
 It is RECOMMENDED that servers schedule DATAGRAM capsules the same as response
 data.
 
-# Retranmission Scheduling
+# Retransmission Scheduling
 
-{{Section 12 of !I-D.ietf-httpbis-priority}} provides guidance about scheduling
+Section 12 of {{!I-D.ietf-httpbis-priority}} provides guidance about scheduling
 of retransmission data vs. new data. Since QUIC datagrams are not retransmitted,
 endpoints that prioritize QUIC stream retransmission data could delay datagrams.
-Furthermore, since DATAGRAM capsules are sent as stream data, they **are** subject
-to retransmission and could also delay native QUIC datagrams.
+Furthermore, since DATAGRAM capsules are sent as stream data, they **are**
+subject to retransmission and could also delay native QUIC datagrams.
 
 # Security Considerations
 
