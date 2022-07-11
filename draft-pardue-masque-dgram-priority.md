@@ -24,11 +24,13 @@ normative:
 --- abstract
 
 Application protocols using the QUIC transport protocol rely on streams, and
-optionally the DATAGRAM extension, to carry application data. Streams and
-datagrams can be multiplexed but QUIC provides no interoperable prioritization
-scheme or signaling mechanism itself. The HTTP Extensible Prioritization scheme
-describes how to prioritize streams in HTTP/2 and HTTP/3. This document adopts
-the scheme to support HTTP datagrams.
+optionally the unreliable datagram extension, to carry application data. Streams
+and datagrams can be multiplexed in single connections but QUIC does not define
+an interoperable prioritization scheme or signaling mechanism. The HTTP
+Extensible Prioritization scheme describes an application-level scheme for the
+prioritization of streams in HTTP/2 and HTTP/3. This document defines how
+Extensible Priorities can be augmented to apply to the multiplexing of HTTP
+datagram flows with other flows or streams.
 
 --- note_Note_tho_Readers
 
@@ -42,13 +44,15 @@ Source code and issues list for this draft can be found at
 # Introduction
 
 Application protocols using the QUIC transport protocol {{?QUIC=RFC9000}} rely
-on streams, and optionally the DATAGRAM extension
-{{!QUIC-DATAGRAM=I-D.ietf-quic-datagram}}, to carry application data. Streams and
-datagrams can be multiplexed but QUIC provides no interoperable prioritization
-scheme or signaling mechanism itself. The HTTP Extensible Prioritization scheme
-{{!I-D.ietf-httpbis-priority}} describes how to prioritize streams in HTTP/2 and
-HTTP/3. This document adopts the scheme to support HTTP datagrams
-{{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}}.
+on streams, and optionally the unreliable datagram extension
+{{!QUIC-DATAGRAM=RFC9221}}, to carry application data. Streams and datagrams can
+be multiplexed in single connections but QUIC does not define an interoperable
+prioritization scheme or signaling mechanism. The HTTP Extensible Prioritization
+scheme {{!PRIORITY=RFC9218}} describes an application-level scheme for the
+prioritization of streams in HTTP/2 and HTTP/3. This document defines how
+Extensible Priorities can be applied to the multiplexing of HTTP datagram
+{{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}} flows with other flows or
+streams.
 
 The Extensible Priorities scheme for HTTP describes how clients can send
 priority signals related to requests in order to suggest how a server allocates
@@ -57,56 +61,58 @@ carried on streams. When the protocol is HTTP/3, responses are carries on QUIC
 streams.
 
 While QUIC streams support multiplexing natively via use of a stream identifier,
-the QUIC DATAGRAM extension does not provide any such identifier. HTTP datagrams
-{{HTTP-DATAGRAM}} supports multiplexing using a set of application-level
-identifiers that can be controlled and accessed by HTTP/3. One identifer relates
-to a request stream, the second, optional, identifer relates to an abstract
-context. {{HTTP-DATAGRAM}} does not, however, define any means for multiplexed
-datagram prioritization.
+the unreliable datagram extension does not provide any such multiplexing
+identifier.
 
-When the application protocol is HTTP/3, HTTP Datagrams can map directly to QUIC
-datagrams or they can be carried on streams using a DATAGRAM Capsule; see
-{{Section 4.4 of HTTP-DATAGRAM}}.
+HTTP datagrams ({{HTTP-DATAGRAM}}) defines how multiplexed, potentially
+unreliable datagrams can be sent inside an HTTP connection. All datagrams are
+always associated with a request stream. In HTTP/3, HTTP datagrams can map
+directly to QUIC datagrams, in which case they carry an encoding of the stream
+ID that is used to demultiplex at the receiver; see {{Section 3.1 of
+HTTP-DATAGRAM}}. {{HTTP-DATAGRAM}} also defines the DATAGRAM capsule, which can
+be used for reliable delivery over all versions of HTTP; see
+{{Section 3.5 of HTTP-DATAGRAM}}. In all cases, the prioritization of datagrams
+is noted as unspecified and delegated to future extensions.
 
-This document describes how the Extensible Priorities scheme applies to HTTP
-datagrams. Priority signals sent by clients, related to requests, can also be
-considered input to server scheduling decisions for HTTP datagrams mapped to
-QUIC datagrams.
+This document describes how the Extensible Priorities scheme can be augmented to
+also apply to HTTP datagrams that are multiplexed with other flows or streams.
+It enhances the Priority signals sent by clients, with a new `du` parameter and
+explains how this input is to be considered in server scheduling decisions
+for HTTP datagrams mapped to QUIC datagrams.
 
 
 ## Notational Conventions
 
 {::boilerplate bcp14}
 
-The term sf-integer is imported from {{!STRUCTURED-FIELDS=RFC8941}}.
+The term Integer is imported from {{!STRUCTURED-FIELDS=RFC8941}}.
 
 # Signalling Datagram Priority
 
-The Extensible Prioritization scheme {{!I-D.ietf-httpbis-priority}} provides a
-framework for communicating and acting upon priority parameters, using
-{{STRUCTURED-FIELDS}} formats. It defines the urgency and incremental parameters
-and provides guidance to implementers about how to act on these parameters, in
-combination with other inputs, to make resource allocation and scheduling
-choices. Urgency communicates the client-view of request importance, and
-incremental communicates how the client intends to process response data as it
-arrives. Parameters are communicated in HTTP headers or version-specific frames.
-A client omitting the urgency or incremental parameters can be interpreted by
-the server as a signal to apply default priorities. The core scheme is
-extensible, new parameters can be defined to augment the base ones.
+The Extensible Prioritization scheme {{!PRIORITY}} provides a framework for
+communicating and acting upon priority parameters, using {{STRUCTURED-FIELDS}}
+formats. It defines the urgency and incremental parameters and provides guidance
+to implementers about how to act on these parameters, in combination with other
+inputs, to make resource allocation and scheduling choices. Urgency communicates
+the client-view of request importance, and incremental communicates how the
+client intends to process response data as it arrives. Parameters are
+communicated in HTTP headers or version-specific frames. A client omitting the
+urgency or incremental parameters can be interpreted by the server as a signal
+to apply default priorities. The core scheme is extensible, new parameters can
+be defined to augment the base ones.
 
 This specification defines the datagram-urgency (`du`) extension parameter that
 operates in addition to the base urgency. There is no extension to the base
-incremental behavior; individual datragrams, even if belonging to the same
+incremental behavior; individual datagrams, even if belonging to the same
 identifier, are messages that are expected to be processed individually as they
 arrive.
 
 ## Datagram Urgency
 
-The datagram-urgency parameter (`du`) takes an integer between 0 and 7, in
-descending order of priority. This range matches the base urgency (`u`)
-parameter range; see Section 4.1 of {{!I-D.ietf-httpbis-priority}}.
-
-The value is encoded as an sf-integer. There is no default value.
+The datagram-urgency parameter (`du`) is Integer (see Section 3.3.1 of
+{{STRUCTURED-FIELDS}}), between 0 and 7, in descending order of priority. This
+range matches the base urgency (`u`) parameter range; see Section 4.1 of
+{{!PRIORITY}}. However, there is no default value.
 
 This parameter indicates the sender's recommendation, based on the expectation
 that the server would transmit HTTP datagrams in the order of their
@@ -125,8 +131,8 @@ The following example shows a request for a CSS file with the urgency set to
 priority = u=0, du=2
 ~~~
 
-Endpoints MUST NOT treat reception of the datagram-urgency parameter, even if
-HTTP datagram support is not enabled.
+Endpoints MUST NOT treat reception of the datagram-urgency parameter as an
+error, even if HTTP datagram support is not enabled.
 
 The datagram-urgency parameter applies only to HTTP datagrams mapped to QUIC
 datagrams. Datagram capsules are sent on streams, so the base urgency parameter
@@ -139,8 +145,8 @@ a request stream. Prioritization of individual contexts is not supported.
 
 ## Reprioritization
 
-Reprioritization is supported using the existing mechanisms defined in Section
-6 of {{!I-D.ietf-httpbis-priority}}.
+Reprioritization is supported using the existing mechanisms defined in {{Section
+6 of PRIORITY}}.
 
 # Client Scheduling
 
@@ -151,16 +157,16 @@ about HTTP datagrams related to the requests it initiates.
 
 Priority signals are input to a prioritization process. Expressing priority is
 only a suggestion. The datagram-urgency parameter introduces new scheduling
-considerations on top of those presented in Section 10 of
-{{!I-D.ietf-httpbis-priority}}.
+considerations on top of those presented in {{Section 10 of
+PRIORITY}}.
 
 It is RECOMMENDED that, when possible, servers send higher urgency HTTP
 datagrams before lower urgency datagrams.
 
 Where streams and datagrams have equal urgency and datagram-urgency, it is
 RECOMMENDED that servers alternate emitting HTTP datagrams and stream bytes.
-Where servers implement the recommendations in Section 10 of
-{{!I-D.ietf-httpbis-priority}}, alternating between datagram and stream data will
+Where servers implement the recommendations in {{Section 10 of
+PRIORITY}}, alternating between datagram and stream data will
 result in fair scheduling. This recommendation holds whether stream are
 incremental or not.
 
@@ -169,7 +175,7 @@ data.
 
 # Retransmission Scheduling
 
-Section 12 of {{!I-D.ietf-httpbis-priority}} provides guidance about scheduling
+{{Section 12 of PRIORITY}} provides guidance about scheduling
 of retransmission data vs. new data. Since QUIC datagrams are not retransmitted,
 endpoints that prioritize QUIC stream retransmission data could delay datagrams.
 Furthermore, since DATAGRAM capsules are sent as stream data, they **are**
@@ -178,7 +184,7 @@ subject to retransmission and could also delay native QUIC datagrams.
 # Security Considerations
 
 There are believed to be no additional considerations to those presented in
-{{!I-D.ietf-httpbis-priority}}.
+{{!PRIORITY}}.
 
 # IANA Considerations
 
