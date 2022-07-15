@@ -70,7 +70,7 @@ Table of Contents
      2.1.  Datagram Urgency
    3.  Reprioritization
    4.  Prioritization when Proxying UDP in HTTP
-     4.1.  The PRIORITY_UPDATE Capsule
+     4.1.  The CONTEXT_PRIORITY Capsule
    5.  Client Scheduling
    6.  Server Scheduling
    7.  Retransmission Scheduling
@@ -79,7 +79,9 @@ Table of Contents
    10. References
      10.1.  Normative References
      10.2.  Informative References
-   Appendix A.  Acknowledgements
+   Appendix A.  Change Log
+     A.1.  Since draft-pardue-masque-dgram-priority-01
+   Acknowledgements
    Author's Address
 
 1.  Introduction
@@ -126,7 +128,7 @@ Table of Contents
 
    When HTTP datagrams are used for proxying UDP, additional use cases
    extending beyond UDP data transfer are supported by the use of
-   context IDs; see Section 4 of [HTTP-UDP-PROXY].  The PRIORITY_UPDATE
+   context IDs; see Section 4 of [HTTP-UDP-PROXY].  The CONTEXT_PRIORITY
    capsule type can be used to signal the datagram-priority of
    individual contexts; see Section 4.1.
 
@@ -206,7 +208,7 @@ Table of Contents
 3.  Reprioritization
 
    Reprioritization behaves similarly to existing mechanisms defined in
-   Section 6 of [PRIORITY].  PRIORITY_UPDATE frames can be sent by
+   Section 6 of [PRIORITY].  CONTEXT_PRIORITY frames can be sent by
    clients to provide updated priority signals after the initial request
    has been sent.
 
@@ -224,20 +226,20 @@ Table of Contents
    Section 2.1.  By default the same datagram-urgency applies to all
    HTTP datagram contexts related to the request stream.
 
-4.1.  The PRIORITY_UPDATE Capsule
+4.1.  The CONTEXT_PRIORITY Capsule
 
    There might be cases where it is beneficial to prioritize individual
    contexts differently from one another.  This document defines the
-   PRIORITY_UPDATE (TBD) capsule type to carry a priority signal related
-   to individual contexts.
+   CONTEXT_PRIORITY (TBD) capsule type to carry a priority signal
+   related to individual contexts.
 
    Once a UDP proxy request converts to the capsule protocol (see
-   Section 3 of [HTTP-UDP-PROXY], clients can send PRIORITY_UPDATE
+   Section 3 of [HTTP-UDP-PROXY], clients can send CONTEXT_PRIORITY
    capsules to signal the priority of the identified context.
 
-   A PRIORITY_UPDATE capsule communicates a complete set of all priority
-   parameters in the Priority Field Value field.  Omitting a priority
-   parameter is a signal to derive a value from defaults; see
+   A CONTEXT_PRIORITY capsule communicates a complete set of all
+   priority parameters in the Priority Field Value field.  Omitting a
+   priority parameter is a signal to derive a value from defaults; see
    Section 2.1.  Failure to parse the Priority Field Value MAY be
    treated as a connection error.  In HTTP/2, the error is of type
    PROTOCOL_ERROR; in HTTP/3, the error is of type
@@ -248,16 +250,16 @@ Table of Contents
 
    TODO: consider if servers could send this capsule type
 
-   Priority_Update Capsule {
-       Type (i) = PRIORITY_UPDATE,
+   Context Priority Capsule {
+       Type (i) = CONTEXT_PRIORITY,
        Length (i),
        Context ID (i),
        Priority Field Value (..),
    }
 
-                  Figure 1: PRIORITY_UPDATE Capsule Format
+                 Figure 1: CONTEXT_PRIORITY Capsule Format
 
-   The PRIORITY_UPDATE capsule has the following fields:
+   The CONTEXT_PRIORITY capsule has the following fields:
 
    Context ID:  The context ID that is the target of the priority
       update.
@@ -385,7 +387,23 @@ Table of Contents
               DOI 10.17487/RFC9000, May 2021,
               <https://www.rfc-editor.org/rfc/rfc9000>.
 
-Appendix A.  Acknowledgements
+Appendix A.  Change Log
+
+      *RFC Editor's Note:* Please remove this section prior to
+      publication of a final version of this document.
+
+A.1.  Since draft-pardue-masque-dgram-priority-01
+
+   *  Realign with Extensible Priorities RFC
+
+   *  Realign with latest HTTP datagram and capsule protocol draft
+
+   *  Add CONTEXT_PRIORITY capsule for prioritizing individual contexts
+
+   *  Better explain that competing stream and datagram flows should
+      share bandwidth but refrain from requiring any specific ratios.
+
+Acknowledgements
 
    This document is inspired by discussion by many people across HTTP,
    QUIC and MASQUE WGs.

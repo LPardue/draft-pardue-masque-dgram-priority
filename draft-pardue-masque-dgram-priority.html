@@ -1156,7 +1156,7 @@ datagram flows with other flows or streams.<a href="#section-abstract-1" class="
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-prioritization-when-proxyin" class="xref">Prioritization when Proxying UDP in HTTP</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-the-priority_update-capsule" class="xref">The PRIORITY_UPDATE Capsule</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-the-context_priority-capsul" class="xref">The CONTEXT_PRIORITY Capsule</a></p>
 </li>
             </ul>
 </li>
@@ -1187,10 +1187,18 @@ datagram flows with other flows or streams.<a href="#section-abstract-1" class="
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="xref">Appendix A</a>.  <a href="#name-acknowledgements" class="xref">Acknowledgements</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="xref">Appendix A</a>.  <a href="#name-change-log" class="xref">Change Log</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-A.1" class="xref">A.1</a>.  <a href="#name-since-draft-pardue-masque-d" class="xref">Since draft-pardue-masque-dgram-priority-01</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="xref"></a><a href="#name-acknowledgements" class="xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1235,7 +1243,7 @@ It enhances the Priority signals sent by clients, with a new datagram-urgency
 considered in server scheduling decisions for HTTP datagrams mapped to QUIC
 datagrams; see <a href="#server-scheduling" class="xref">Section 6</a>.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">When HTTP datagrams are used for proxying UDP, additional use cases extending
-beyond UDP data transfer are supported by the use of context IDs; see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-udp-15#section-4" class="relref">Section 4</a> of [<a href="#HTTP-UDP-PROXY" class="xref">HTTP-UDP-PROXY</a>]</span>. The PRIORITY_UPDATE capsule
+beyond UDP data transfer are supported by the use of context IDs; see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-udp-15#section-4" class="relref">Section 4</a> of [<a href="#HTTP-UDP-PROXY" class="xref">HTTP-UDP-PROXY</a>]</span>. The CONTEXT_PRIORITY capsule
 type can be used to signal the datagram-priority of individual contexts; see
 <a href="#capsule" class="xref">Section 4.1</a>.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <div id="notational-conventions">
@@ -1325,7 +1333,7 @@ applies to them.<a href="#section-2.1-8" class="pilcrow">¶</a></p>
       <h2 id="name-reprioritization">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-reprioritization" class="section-name selfRef">Reprioritization</a>
       </h2>
-<p id="section-3-1">Reprioritization behaves similarly to existing mechanisms defined in <span><a href="https://rfc-editor.org/rfc/rfc9218#section-6" class="relref">Section 6</a> of [<a href="#PRIORITY" class="xref">PRIORITY</a>]</span>. PRIORITY_UPDATE frames can be sent by clients to provide updated
+<p id="section-3-1">Reprioritization behaves similarly to existing mechanisms defined in <span><a href="https://rfc-editor.org/rfc/rfc9218#section-6" class="relref">Section 6</a> of [<a href="#PRIORITY" class="xref">PRIORITY</a>]</span>. CONTEXT_PRIORITY frames can be sent by clients to provide updated
 priority signals after the initial request has been sent.<a href="#section-3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1345,15 +1353,15 @@ ID. UDP payloads use context ID 0, forms of data use other IDs.<a href="#section
 datagram contexts related to the request stream.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <div id="capsule">
 <section id="section-4.1">
-        <h3 id="name-the-priority_update-capsule">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-the-priority_update-capsule" class="section-name selfRef">The PRIORITY_UPDATE Capsule</a>
+        <h3 id="name-the-context_priority-capsul">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-the-context_priority-capsul" class="section-name selfRef">The CONTEXT_PRIORITY Capsule</a>
         </h3>
 <p id="section-4.1-1">There might be cases where it is beneficial to prioritize individual contexts
-differently from one another. This document defines the PRIORITY_UPDATE (TBD)
+differently from one another. This document defines the CONTEXT_PRIORITY (TBD)
 capsule type to carry a priority signal related to individual contexts.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">Once a UDP proxy request converts to the capsule protocol (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-udp-15#section-3" class="relref">Section 3</a> of [<a href="#HTTP-UDP-PROXY" class="xref">HTTP-UDP-PROXY</a>]</span>, clients can send PRIORITY_UPDATE capsules to signal the
+<p id="section-4.1-2">Once a UDP proxy request converts to the capsule protocol (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-udp-15#section-3" class="relref">Section 3</a> of [<a href="#HTTP-UDP-PROXY" class="xref">HTTP-UDP-PROXY</a>]</span>, clients can send CONTEXT_PRIORITY capsules to signal the
 priority of the identified context.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1-3">A PRIORITY_UPDATE capsule communicates a complete set of all priority parameters
+<p id="section-4.1-3">A CONTEXT_PRIORITY capsule communicates a complete set of all priority parameters
 in the Priority Field Value field. Omitting a priority parameter is a signal to
 derive a value from defaults; see <a href="#datagram-urgency" class="xref">Section 2.1</a>. Failure to parse the
 Priority Field Value MAY be treated as a connection error. In HTTP/2, the error
@@ -1362,12 +1370,12 @@ H3_GENERAL_PROTOCOL_ERROR.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <p id="section-4.1-4">TODO: describe what happens if capsules arrive before contexts exists. Buffer?
 Drop?<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 <p id="section-4.1-5">TODO: consider if servers could send this capsule type<a href="#section-4.1-5" class="pilcrow">¶</a></p>
-<span id="name-priority_update-capsule-for"></span><div id="fig-priority_update">
+<span id="name-context_priority-capsule-fo"></span><div id="fig-context-priority">
 <figure id="figure-1">
           <div class="alignLeft art-text artwork" id="section-4.1-6.1">
 <pre>
-Priority_Update Capsule {
-    Type (i) = PRIORITY_UPDATE,
+Context Priority Capsule {
+    Type (i) = CONTEXT_PRIORITY,
     Length (i),
     Context ID (i),
     Priority Field Value (..),
@@ -1375,10 +1383,10 @@ Priority_Update Capsule {
 </pre>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
-<a href="#name-priority_update-capsule-for" class="selfRef">PRIORITY_UPDATE Capsule Format</a>
+<a href="#name-context_priority-capsule-fo" class="selfRef">CONTEXT_PRIORITY Capsule Format</a>
           </figcaption></figure>
 </div>
-<p id="section-4.1-7">The PRIORITY_UPDATE capsule has the following fields:<a href="#section-4.1-7" class="pilcrow">¶</a></p>
+<p id="section-4.1-7">The CONTEXT_PRIORITY capsule has the following fields:<a href="#section-4.1-7" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.1-8">
           <dt id="section-4.1-8.1">Context ID:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-8.2">
@@ -1536,17 +1544,48 @@ Registry<a href="#section-9-1" class="pilcrow">¶</a></p>
 </dl>
 </section>
 </section>
-<div id="acknowledgements">
+<div id="change-log">
 <section id="appendix-A">
-      <h2 id="name-acknowledgements">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      <h2 id="name-change-log">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-change-log" class="section-name selfRef">Change Log</a>
       </h2>
-<p id="appendix-A-1">This document is inspired by discussion by many people across HTTP, QUIC and
-MASQUE WGs.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="appendix-A-1.1">
+          <p id="appendix-A-1.1.1"><strong>RFC Editor's Note:</strong>  Please remove this section prior to publication of a
+final version of this document.<a href="#appendix-A-1.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<div id="since-draft-pardue-masque-dgram-priority-01">
+<section id="appendix-A.1">
+        <h3 id="name-since-draft-pardue-masque-d">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-since-draft-pardue-masque-d" class="section-name selfRef">Since draft-pardue-masque-dgram-priority-01</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-1.1">Realign with Extensible Priorities RFC<a href="#appendix-A.1-1.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-1.2">Realign with latest HTTP datagram and capsule protocol draft<a href="#appendix-A.1-1.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-1.3">Add CONTEXT_PRIORITY capsule for prioritizing individual contexts<a href="#appendix-A.1-1.3" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-1.4">Better explain that competing stream and datagram flows should share bandwidth
+but refrain from requiring any specific ratios.<a href="#appendix-A.1-1.4" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="appendix-B">
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-B-1">This document is inspired by discussion by many people across HTTP, QUIC and
+MASQUE WGs.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-C">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
