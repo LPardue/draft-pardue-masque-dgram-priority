@@ -77,8 +77,15 @@ datagrams is noted as unspecified and delegated to future extensions.
 This document describes how the Extensible Priorities scheme can be augmented to
 also apply to HTTP datagrams that are multiplexed with other flows or streams.
 It enhances the Priority signals sent by clients, with a new datagram-urgency
-(`du`) parameter and explains how this input is to be considered in server
-scheduling decisions for HTTP datagrams mapped to QUIC datagrams.
+(`du`) parameter ({{datagram-urgency}}) and explains how this input is to be
+considered in server scheduling decisions for HTTP datagrams mapped to QUIC
+datagrams; see {{server-scheduling}}.
+
+When HTTP datagrams are used for proxying UDP, additional use cases extending
+beyond UDP data transfer are supported by the use of context IDs; see {{Section
+4 of !HTTP-UDP-PROXY=I-D.ietf-masque-connect-udp}}. The PRIORITY_UPDATE capsule
+type can be used to signal the datagram-priority of individual contexts; see
+{{capsule}}.
 
 
 ## Notational Conventions
@@ -160,19 +167,18 @@ priority signals after the initial request has been sent.
 
 # Prioritization when Proxying UDP in HTTP
 
-{{!HTTP-UDP-PROXY=I-D.ietf-masque-connect-udp}} describes how to proxy UDP using
-HTTP datagrams. Client make UDP proxying requests using Extended CONNECT, which
-initiates a UDP tunnel. HTTP datagrams related to this stream correspond to the
-UDP tunnel by default. In order support extension use cases, {{Section 4 of
-HTTP-UDP-PROXY}} defines context IDs, that are sent within datagrams, in
-addition to the Quarter Stream ID. UDP payloads use context ID 0, forms of data
-use other IDs.
+{{HTTP-UDP-PROXY}} describes how to proxy UDP using HTTP datagrams. Client make
+UDP proxying requests using Extended CONNECT, which initiates a UDP tunnel. HTTP
+datagrams related to this stream correspond to the UDP tunnel by default. In
+order support extension use cases, {{Section 4 of HTTP-UDP-PROXY}} defines
+context IDs, that are sent within datagrams, in addition to the Quarter Stream
+ID. UDP payloads use context ID 0, forms of data use other IDs.
 
 Datagram priority applies to UDP proxying requests, as described in
 {{datagram-urgency}}. By default the same datagram-urgency applies to all HTTP
 datagram contexts related to the request stream.
 
-## The PRIORITY_UPDATE Capsule
+## The PRIORITY_UPDATE Capsule {#capsule}
 
 There might be cases where it is beneficial to prioritize individual contexts
 differently from one another. This document defines the PRIORITY_UPDATE (TBD)
