@@ -83,7 +83,7 @@ datagrams; see {{server-scheduling}}.
 
 When HTTP datagrams are used for proxying UDP, additional use cases extending
 beyond UDP data transfer are supported by the use of context IDs; see {{Section
-4 of !HTTP-UDP-PROXY=I-D.ietf-masque-connect-udp}}. The PRIORITY_UPDATE capsule
+4 of !HTTP-UDP-PROXY=I-D.ietf-masque-connect-udp}}. The CONTEXT_PRIORITY capsule
 type can be used to signal the datagram-priority of individual contexts; see
 {{capsule}}.
 
@@ -162,7 +162,7 @@ applies to them.
 # Reprioritization
 
 Reprioritization behaves similarly to existing mechanisms defined in {{Section 6
-of PRIORITY}}. PRIORITY_UPDATE frames can be sent by clients to provide updated
+of PRIORITY}}. CONTEXT_PRIORITY frames can be sent by clients to provide updated
 priority signals after the initial request has been sent.
 
 # Prioritization when Proxying UDP in HTTP
@@ -178,17 +178,17 @@ Datagram priority applies to UDP proxying requests, as described in
 {{datagram-urgency}}. By default the same datagram-urgency applies to all HTTP
 datagram contexts related to the request stream.
 
-## The PRIORITY_UPDATE Capsule {#capsule}
+## The CONTEXT_PRIORITY Capsule {#capsule}
 
 There might be cases where it is beneficial to prioritize individual contexts
-differently from one another. This document defines the PRIORITY_UPDATE (TBD)
+differently from one another. This document defines the CONTEXT_PRIORITY (TBD)
 capsule type to carry a priority signal related to individual contexts.
 
 Once a UDP proxy request converts to the capsule protocol (see {{Section 3 of
-HTTP-UDP-PROXY}}, clients can send PRIORITY_UPDATE capsules to signal the
+HTTP-UDP-PROXY}}, clients can send CONTEXT_PRIORITY capsules to signal the
 priority of the identified context.
 
-A PRIORITY_UPDATE capsule communicates a complete set of all priority parameters
+A CONTEXT_PRIORITY capsule communicates a complete set of all priority parameters
 in the Priority Field Value field. Omitting a priority parameter is a signal to
 derive a value from defaults; see {{datagram-urgency}}. Failure to parse the
 Priority Field Value MAY be treated as a connection error. In HTTP/2, the error
@@ -201,16 +201,16 @@ Drop?
 TODO: consider if servers could send this capsule type
 
 ~~~
-Priority_Update Capsule {
-    Type (i) = PRIORITY_UPDATE,
+Context Priority Capsule {
+    Type (i) = CONTEXT_PRIORITY,
     Length (i),
     Context ID (i),
     Priority Field Value (..),
 }
 ~~~
-{: #fig-priority_update capsule title="PRIORITY_UPDATE Capsule Format"}
+{: #fig-context-priority capsule title="CONTEXT_PRIORITY Capsule Format"}
 
-The PRIORITY_UPDATE capsule has the following fields:
+The CONTEXT_PRIORITY capsule has the following fields:
 
 Context ID:
 : The context ID that is the target of the priority update.
@@ -290,7 +290,22 @@ Reference:
 
 --- back
 
+# Change Log
+
+> **RFC Editor's Note:**  Please remove this section prior to publication of a
+> final version of this document.
+
+## Since draft-pardue-masque-dgram-priority-01
+
+- Realign with Extensible Priorities RFC
+- Realign with latest HTTP datagram and capsule protocol draft
+- Add CONTEXT_PRIORITY capsule for prioritizing individual contexts
+- Better explain that competing stream and datagram flows should share bandwidth
+  but refrain from requiring any specific ratios.
+
+
 # Acknowledgements
+{:numbered="false"}
 
 This document is inspired by discussion by many people across HTTP, QUIC and
 MASQUE WGs.
